@@ -1,0 +1,34 @@
+#     ██████╗ ██╗████████╗ ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗
+#    ██╔════╝ ██║╚══██╔══╝██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝
+#    ██║  ███╗██║   ██║   ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+#    ██║   ██║██║   ██║   ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+# ██╗╚██████╔╝██║   ██║   ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+# ╚═╝ ╚═════╝ ╚═╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
+# https://textkool.com/en/ascii-art-generator?hl=default&vl=default&font=ANSI%20Shadow&text=.gitconfig
+
+[user]
+  email = amadeusz.kryze@pm.me
+	name = Aam
+	signingkey = 57338508EFAA3D34546C4E327BC58710260A0675
+[http]
+	sslverify = false
+[pull]
+	rebase = true
+[core]
+	ignorecase = false
+	excludesFile = ~/.gitignore
+[init]
+	defaultBranch = main
+[status]
+	submoduleSummary = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[gpg]
+	program = gpg
+[push]
+	autoSetupRemote = true
+[rebase]
+	autoStash = true

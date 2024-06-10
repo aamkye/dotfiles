@@ -1,0 +1,151 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
+version: 2
+final_space: false
+console_title_template: "{{ .Shell }} in {{ .Folder }}"
+
+blocks:
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+      - type: session
+        style: plain
+        foreground: lightBlue
+        background: transparent
+        template: "<white,transparent>as</> {{ .UserName }}{{ if .SSHSession }}@{{ .HostName }}{{ end }}"
+
+      - type: path
+        style: plain
+        foreground: yellow
+        background: transparent
+        template: " <white,transparent>in</> {{ path .Path .Location }}"
+        properties:
+          style: agnoster_short
+          max_depth: 2
+
+      - type: git
+        style: plain
+        foreground: green
+        background: transparent
+        template: " <white,transparent>on</>
+          {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }}{{ end }}
+          {{ .HEAD }}
+          {{- if not (and (eq .Behind 0) (eq .Ahead 0)) }}{{ .BranchStatus }}{{ end -}}
+          {{- if gt .StashCount 0 }} <lightRed,transparent>@{{ .StashCount }}</>{{ end -}}
+          {{- if or (.Working.Changed) (.Staging.Changed) }} <white,transparent>[</>
+            {{- if .Working.Changed }}<lightYellow,transparent>{{ .Working.String }}</>{{ end -}}
+            {{- if and (.Working.Changed) (.Staging.Changed) }}<white,transparent>|</>{{ end -}}
+            {{- if .Staging.Changed }}<lightGreen,transparent>{{ .Staging.String }}</>{{ end -}}
+          <white,transparent>]</>
+          {{- end -}}"
+        properties:
+          branch_icon: ''
+          github_icon: "\uF408"
+          branch_max_length: 25
+          fetch_status: true
+          fetch_upstream_icon: true
+
+  - type: prompt
+    alignment: right
+    segments:
+      - type: time
+        style: plain
+        foreground: lightBlue
+        background: transparent
+        template: " <white,transparent>at</> {{ .CurrentDate | date \"15:04:05\" -}}"
+
+      - type: executiontime
+        style: plain
+        foreground: yellow
+        background: transparent
+        template: " <white,transparent>took</> {{ .FormattedMs -}}"
+        properties:
+          always_enabled: false
+          threshold: 1000
+          style: austin
+
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+      - type: text
+        style: plain
+        foreground: green
+        foreground_templates:
+          - "{{ if gt .Code 0 }}red{{ end }}"
+          - "{{ if eq .Code 0 }}green{{ end }}"
+        background: transparent
+        template: "> "
+
+  - type: rprompt
+    alignment: right
+    segments:
+      - type: battery
+        style: plain
+        foreground_templates:
+          - '{{if ge 0 .Percentage}}red{{end}}'
+          - '{{if ge 20 .Percentage}}lightRed{{end}}'
+          - '{{if ge 40 .Percentage}}yellow{{end}}'
+          - '{{if ge 60 .Percentage}}lightYellow{{end}}'
+          - '{{if ge 80 .Percentage}}lightGreen{{end}}'
+          - '{{if ge 90 .Percentage}}green{{end}}'
+        background: transparent
+        template: "{{ if not .Error }}<white,transparent>bat</> {{ .Icon }}{{ .Percentage }}%{{ end -}}{{ .Error }}"
+        properties:
+          display_error: true
+          charging_icon: "+"
+          discharging_icon: "-"
+          charged_icon: ""
+          not_charging_icon: "~"
+
+      - type: upgrade
+        style: plain
+        foreground: white
+        background: transparent
+        properties:
+          cache_timeout: 120
+        template: "{{- if not (eq .Current .Latest) }} OMP <red,transparent>{{ .Current }}</> -> <green,transparent>{{ .Latest }}</>{{ end }}"
+
+# tooltips:
+#   - type: aws
+#     tips:
+#       - aws
+#     style: plain
+#     foreground: p:orange
+#     background: transparent
+#     template: "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}"
+#     properties:
+#       display_default: true
+
+#   - type: az
+#     tips:
+#       - az
+#     style: plain
+#     foreground: p:blue
+#     background: transparent
+#     template: "{{ .Name }}"
+
+#   - type: terraform
+#     tips:
+#       - tf
+#       - terraform
+#     style: plain
+#     foreground: p:green
+#     background: transparent
+#     template: "{{ .WorkspaceName }}{{ .Version }}"
+#     properties:
+#       fetch_version: true
+
+transient_prompt:
+  foreground: green
+  foreground_templates:
+    - "{{ if gt .Code 0 }}red{{ end }}"
+    - "{{ if eq .Code 0 }}green{{ end }}"
+  background: transparent
+  template: "> "
+
+secondary_prompt:
+  foreground: yellow
+  background: transparent
+  template: ">> "
