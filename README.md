@@ -5,5 +5,6 @@ Dotfiles repository with ansible automation and single point of configuration in
 ## To install
 
 ```shell
+> mkdir ${HOME}/.dotfiles
 dotfiles > stow -v -S -t ${HOME} .
 ```

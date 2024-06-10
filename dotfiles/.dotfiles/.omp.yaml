@@ -31,7 +31,7 @@ blocks:
         template: " <white,transparent>on</>
           {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }}{{ end }}
           {{ .HEAD }}
-          {{- if not (and (eq .Behind 0) (eq .Ahead 0)) }}{{ .BranchStatus }}{{ end -}}
+          {{- if not (and (eq .Behind 0) (eq .Ahead 0)) }} {{ .BranchStatus }}{{ end -}}
           {{- if gt .StashCount 0 }} <lightRed,transparent>@{{ .StashCount }}</>{{ end -}}
           {{- if or (.Working.Changed) (.Staging.Changed) }} <white,transparent>[</>
             {{- if .Working.Changed }}<lightYellow,transparent>{{ .Working.String }}</>{{ end -}}
