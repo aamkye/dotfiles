@@ -137,3 +137,11 @@ terraform_targets() {
 terraform_targets_apply() {
     terraform plan | terraform-targets | grep ${1} | xargs -r terraform apply -auto-approve
 }
+
+ssh_ed25519_sk() {
+    ssh-keygen -t ed25519-sk -O resident -O application=ssh:$1 -O verify-required -C "" -N "" -f "./${2}"
+}
+
+ssh_ed25519_backup() {
+    ssh-keygen -t ed25519 -O resident -O application=ssh:backup -O verify-required -C "" -N "${1}" -f "./${2}"
+}
