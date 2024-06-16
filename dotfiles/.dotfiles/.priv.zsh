@@ -89,6 +89,7 @@ alias kn="kubens"
 alias kx="kubectx"
 alias scode="sudo code --user-data-dir=/root"
 alias setenv="source ~/venv/bin/activate"
+alias clear_ssh="ssh-add -D"
 
 # --- Misc --------------------------------------------------------------------
 alias fuck='sudo $(fc -ln -1)'

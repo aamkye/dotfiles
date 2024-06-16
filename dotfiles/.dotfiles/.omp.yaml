@@ -2,7 +2,7 @@
 
 version: 2
 final_space: false
-console_title_template: "{{ .Shell }} in {{ .Folder }}"
+console_title_template: "{{ .Folder }}"
 
 blocks:
   - type: prompt
@@ -32,12 +32,12 @@ blocks:
           {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }}{{ end }}
           {{ .HEAD }}
           {{- if not (and (eq .Behind 0) (eq .Ahead 0)) }} {{ .BranchStatus }}{{ end -}}
-          {{- if gt .StashCount 0 }} <lightRed,transparent>@{{ .StashCount }}</>{{ end -}}
-          {{- if or (.Working.Changed) (.Staging.Changed) }} <white,transparent>[</>
-            {{- if .Working.Changed }}<lightYellow,transparent>{{ .Working.String }}</>{{ end -}}
+          {{- if gt .StashCount 0 }} <lightRed,transparent>*{{ .StashCount }}</>{{ end -}}
+          {{- if or (.Working.Changed) (.Staging.Changed) }} <white,transparent>(</>
+            {{- if .Working.Changed }}<lightRed,transparent>{{ .Working.String }}</>{{ end -}}
             {{- if and (.Working.Changed) (.Staging.Changed) }}<white,transparent>|</>{{ end -}}
             {{- if .Staging.Changed }}<lightGreen,transparent>{{ .Staging.String }}</>{{ end -}}
-          <white,transparent>]</>
+          <white,transparent>)</>
           {{- end -}}"
         properties:
           branch_icon: ''
@@ -48,12 +48,21 @@ blocks:
 
   - type: prompt
     alignment: right
+    overflow: hide
     segments:
+      # - type: sysinfo
+      #   style: plain
+      #   foreground: white
+      #   background: transparent
+      #   template: "load <red,transparent>{{ round .Load1 .Precision }}</>/<yellow,transparent>{{ round .Load5 .Precision }}</>/<green,transparent>{{ round .Load15 .Precision }}</>"
+      #   properties:
+      #     precision: 1
+
       - type: time
         style: plain
-        foreground: lightBlue
+        foreground: magenta
         background: transparent
-        template: " <white,transparent>at</> {{ .CurrentDate | date \"15:04:05\" -}}"
+        template: " <white,transparent>at</> {{ .CurrentDate | date \"15:04\" -}}"
 
       - type: executiontime
         style: plain
@@ -81,6 +90,18 @@ blocks:
   - type: rprompt
     alignment: right
     segments:
+      # - type: command
+      #   style: plain
+      #   foreground: white
+      #   background: transparent
+      #   foreground_templates:
+      #     - "{{ if eq (int .Output) 0 }}green{{ end }}"
+      #     - "{{ if gt (int .Output) 0 }}red{{ end }}"
+      #   template: "<white,transparent>ssh-key</> @{{ .Output }}"
+      #   properties:
+      #     command: ssh-add -l | grep -v "The agent has no identities." | wc -l
+      #     interpret: true
+
       - type: battery
         style: plain
         foreground_templates:
@@ -91,7 +112,7 @@ blocks:
           - '{{if ge 80 .Percentage}}lightGreen{{end}}'
           - '{{if ge 90 .Percentage}}green{{end}}'
         background: transparent
-        template: "{{ if not .Error }}<white,transparent>bat</> {{ .Icon }}{{ .Percentage }}%{{ end -}}{{ .Error }}"
+        template: "{{ if not .Error }} <white,transparent>with</> {{ .Icon }}{{ .Percentage }}%{{ end -}}{{ .Error }}"
         properties:
           display_error: true
           charging_icon: "+"
@@ -105,7 +126,7 @@ blocks:
         background: transparent
         properties:
           cache_timeout: 120
-        template: "{{- if not (eq .Current .Latest) }} OMP <red,transparent>{{ .Current }}</> -> <green,transparent>{{ .Latest }}</>{{ end }}"
+        template: "{{- if not (eq .Current .Latest) }} OMP <green,transparent>{{ .Latest }}</>{{ end }}"
 
 # tooltips:
 #   - type: aws

@@ -17,6 +17,7 @@
 [core]
 	ignorecase = false
 	excludesFile = ~/.gitignore
+	fileMode = true
 [init]
 	defaultBranch = main
 [status]

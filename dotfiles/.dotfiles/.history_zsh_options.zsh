@@ -19,14 +19,15 @@ setopt incappendhistory     # Write to the history file immediately, not when th
 setopt sharehistory         # Share history between all sessions.
 setopt nohistsavebycopy     # zsh writes a temporary file then moves it in place when complete. In this case, if the history file was a symbolic link, the new file replaces the symbolic link.
 
-setopt autocd          # Change directory as you go
-setopt autopushd       # Push directories onto the stack
-setopt chasedots       # Don't pushd into a directory if it contains a dotfile
-setopt pushdignoredups # Don't pushd if the directory is already on the stack
-setopt pushdsilent     # Don't print a message when changing directories
-setopt pushdtohome     # Pushd to the home directory
-setopt nobeep          # Don't beep when accessing nonexistent history.
-setopt nonomatch       # Don't match if pattern contains a globbing character
+setopt autocd               # Change directory as you go
+setopt autopushd            # Push directories onto the stack
+setopt chasedots            # Don't pushd into a directory if it contains a dotfile
+setopt pushdignoredups      # Don't pushd if the directory is already on the stack
+setopt pushdsilent          # Don't print a message when changing directories
+setopt pushdtohome          # Pushd to the home directory
+setopt nobeep               # Don't beep when accessing nonexistent history.
+# setopt nonomatch            # Don't match if pattern contains a globbing character
+setopt interactivecomments  # Allow comments in interactive shells
 
 export CASE_SENSITIVE="false"
 export HYPHEN_INSENSITIVE="true"

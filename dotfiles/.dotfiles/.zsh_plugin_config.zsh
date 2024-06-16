@@ -52,9 +52,9 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(
 ### END ZSH SYNTAX HIGHLIGHT
 
 ### AUTOCOMPLETE OPTIONS
-# # https://github.com/marlonrichert/zsh-autocomplete/blob/main/.zshrc
-# # zstyle ':autocomplete:*' min-input 2
-# # zstyle ':autocomplete:*' delay 0.05
+# https://github.com/marlonrichert/zsh-autocomplete/blob/main/.zshrc
+zstyle ':autocomplete:*' min-input 2
+zstyle ':autocomplete:*' delay 0.3
 zstyle ':autocomplete:*' recent-dirs no
 zstyle ':autocomplete:*' widget-style menu-select
 zstyle ':autocomplete:*' add-space ' '

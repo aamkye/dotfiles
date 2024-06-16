@@ -8,11 +8,6 @@ fi
 
 source "${ZINIT}/zinit.zsh"
 
-## Plugins
-# if [[ -f ${HOME}/.dotfiles/.p10k.zsh ]]; then
-#   zinit ice depth=1; zinit light romkatv/powerlevel10k
-# fi
-
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 zinit light zsh-users/zsh-syntax-highlighting
