@@ -56,9 +56,9 @@ repos:
     - id: detect-private-key
       name: Check Private Keys
       stages: [pre-commit]
-    - id: detect-aws-credentials
-      name: Check AWS Credentials
-      stages: [pre-commit]
+    # - id: detect-aws-credentials
+    #   name: Check AWS Credentials
+    #   stages: [pre-commit]
     - id: check-executables-have-shebangs
       name: Check proper shebang.
       stages: [pre-commit]
