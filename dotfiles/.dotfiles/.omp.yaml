@@ -126,7 +126,7 @@ blocks:
         background: transparent
         properties:
           cache_timeout: 120
-        template: "{{- if not (eq .Current .Latest) }} OMP <green,transparent>{{ .Latest }}</>{{ end }}"
+        template: "{{- if not (eq .Current .Latest) }} ^<green,transparent>OMP</>{{ end }}"
 
 # tooltips:
 #   - type: aws

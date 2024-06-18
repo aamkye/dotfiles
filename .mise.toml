@@ -1,0 +1,12 @@
+[tools]
+# awscli          = '2.15.61'
+# golang          = '1.22.3'
+pre-commit      = '3.7.1'
+python          = '3.12.3'
+# terraform       = '1.8.4'
+# terraform-docs  = '0.18.0'
+# trivy           = '0.51.4'
+# trufflehog      = '3.77.0'
+
+[plugins]
+# trufflehog = 'https://github.com/Inetum-Poland/asdf-trufflehog.git'
