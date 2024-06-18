@@ -6,26 +6,29 @@
 # ╚═╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 # https://textkool.com/en/ascii-art-generator?hl=default&vl=default&font=ANSI%20Shadow&text=.priv.zsh
 
+# --- MacOS -------------------------------------------------------------------
+
+alias make="gmake"
+alias grep="ggrep"
+
 # --- General -----------------------------------------------------------------
 
 alias back="cd $OLDPWD"
 alias c="clear"
 alias check_tunnels="sudo lsof -i -n | grep \"IPv4\" | egrep '\<ssh\>'"
-alias cp="cp -rfiv"
-alias df="df -h"
-alias du="du -c -h"
+alias cp+="cp -rfiv"
+alias df+="df -h"
+alias du+="du -c -h"
 alias ducks='du -cks -- * | sort -rn | head'
 alias get_public_key="ssh-keygen -y -f"
-alias grep="grep --color=auto"
-alias less="less -CfJMNRSUW"
+# alias less="less -CfJMNRSUW"
 alias ll="eza --long --header --group --colour-scale --group-directories-first --octal-permissions --time-style=long-iso -a"
 # alias ll="eza -alhgF --group-directories-first --octal-permissions --sort name --git"
-alias ll_old="ls -alh --time-style=long-iso --group-directories-first"
 alias etree="et --ignore-git --dirs-first --sort name -HI"
-alias mkdir="mkdir -p -v"
+alias mkdir+="mkdir -p -v"
 # alias mv="noglob zmv -W"
-alias reload="exec -l $SHELL && source $ZSH_CONF && autoload -U compinit && compinit"
-alias rm="rm -rfiv"
+alias reload="exec -l ${SHELL}"
+alias rm+="rm -rfiv"
 alias root="sudo -s"
 alias rsync+='rsync \
   --partial \
@@ -39,27 +42,7 @@ alias rsync+='rsync \
   --append-verify'
 alias swapcls='sudo swapoff -a && sudo swapon -a'
 alias test_color="msgcat --color=test"
-alias zshconfig="$EDITOR $ZSH_CONF"
 alias omp="oh-my-posh"
-
-timezsh() {
-  shell=${1-$SHELL}
-  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
-}
-
-timezsh_plugins() {
-    for plugin ($plugins); do
-    timer=$(($(gdate +%s%N)/1000000))
-    if [ -f $ZSH_CUSTOM/plugins/$plugin/$plugin.plugin.zsh ]; then
-        source $ZSH_CUSTOM/plugins/$plugin/$plugin.plugin.zsh
-    elif [ -f $ZSH/plugins/$plugin/$plugin.plugin.zsh ]; then
-        source $ZSH/plugins/$plugin/$plugin.plugin.zsh
-    fi
-    now=$(($(gdate +%s%N)/1000000))
-    elapsed=$(($now-$timer))
-    echo $elapsed":" $plugin
-    done
-}
 
 # --- Git ---------------------------------------------------------------------
 alias gca+="git commit --amend --reuse-message=HEAD@{1}"
@@ -69,8 +52,6 @@ alias glgs="git log --pretty=\"format:%C(yellow)%h %Creset| %Cblue%ar - %aD %Cre
 alias glgs1="git log --pretty=\"format:%C(yellow)%h %Creset| %Cblue%ar %Creset| %Cgreen%aE %Creset|%Cred%d %Creset%s\" --abbrev=12"
 alias glgs2="git log --pretty=\"format:%C(yellow)%h %Creset| %Cblue%ar %Creset| %Cgreen%aE %Creset|%Cred%d %Creset%s%n\" --abbrev=12 -U0 -p --word-diff"
 alias gss="git submodule status"
-alias reyolo='git commit --amend -m "$(whatthecommit)"'
-alias yolo='git commit -m "$(whatthecommit)"'
 
 git_squash () {
     git reset $(git merge-base $1 $(git rev-parse --abbrev-ref HEAD))
@@ -89,6 +70,7 @@ alias kn="kubens"
 alias kx="kubectx"
 alias scode="sudo code --user-data-dir=/root"
 alias setenv="source ~/venv/bin/activate"
+alias pc="pre-commit"
 alias clear_ssh="ssh-add -D"
 
 # --- Misc --------------------------------------------------------------------
@@ -119,17 +101,6 @@ function brew_find_pkg {
     done
 }
 
-# --- MacOS -------------------------------------------------------------------
-alias clear_brew_cache="sudo rm -rf `brew --cache`"
-alias flush_dns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
-alias icloud="cd '$HOME/Library/Mobile Documents/' || true"
-alias macos_add_full_dockspace="defaults write com.apple.dock persistent-apps -array-add '{\"tile-type\"=\"spacer-tile\";}' && killall Dock"
-alias macos_add_half_dock_space="defaults write com.apple.dock persistent-apps -array-add '{\"tile-type\"=\"small-spacer-tile\";}' && killall Dock"
-
-macos_setup() {
-    defaults write com.apple.Dock showhidden -bool TRUE && killall Dock
-}
-
 terraform_targets() {
     # terraform plan | terraform-targets | grep 'some pattern' | xargs -r terraform apply -auto-approve
     sed 's/\x1b\[[0-9;]*m//g' | grep -o '# [^( ]* ' | grep '\.' | sed " s/^# /-target '/; s/ $/'/; "
@@ -145,4 +116,37 @@ ssh_ed25519_sk() {
 
 ssh_ed25519_backup() {
     ssh-keygen -t ed25519 -O resident -O application=ssh:backup -O verify-required -C "" -N "${1}" -f "./${2}"
+}
+
+# tmux detach or delete; https://superuser.com/questions/1466769/how-to-make-ctrld-detach-tmux-while-retaining-gnu-readline-capabilities-in-bas/1466808#1466808
+# function _delete_or_maybe_detach() {
+#   [ -n "$BUFFER" ] && zle delete-char-or-list
+#   [ "$(tmux list-windows | wc -l)" -gt 1 ] && exit
+#   [ "$(tmux list-panes | wc -l)" -gt 1 ] && exit
+#   tmux detach-client
+# }
+
+# if [[ -n "$TMUX" ]]; then
+#   setopt ignoreeof
+#   zle -N _delete_or_maybe_detach
+#   bindkey "^D" _delete_or_maybe_detach
+# fi
+
+function tmuxx() {
+  if tmux has-session -t "${1:-main}" 2>/dev/null; then
+    tmux attach-session -t "${1:-main}"
+  else
+    tmux new-session -s "${1:-main}"
+  fi
+}
+
+# --- MacOS -------------------------------------------------------------------
+alias clear_brew_cache="sudo rm -rf `brew --cache`"
+alias flush_dns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
+alias icloud="cd '$HOME/Library/Mobile Documents/' || true"
+alias macos_add_full_dockspace="defaults write com.apple.dock persistent-apps -array-add '{\"tile-type\"=\"spacer-tile\";}' && killall Dock"
+alias macos_add_half_dock_space="defaults write com.apple.dock persistent-apps -array-add '{\"tile-type\"=\"small-spacer-tile\";}' && killall Dock"
+
+macos_setup() {
+    defaults write com.apple.Dock showhidden -bool TRUE && killall Dock
 }
