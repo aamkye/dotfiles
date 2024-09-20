@@ -54,9 +54,9 @@ alias glgs2="git log --pretty=\"format:%C(yellow)%h %Creset| %Cblue%ar %Creset| 
 alias gss="git submodule status"
 
 git_squash () {
-    git reset $(git merge-base $1 $(git rev-parse --abbrev-ref HEAD))
-    git add -A
-    git commit -m "${2}"
+  git reset $(git merge-base $1 $(git rev-parse --abbrev-ref HEAD))
+  git add -A
+  git commit -m "${2}"
 }
 
 # --- Tooling -----------------------------------------------------------------
@@ -80,42 +80,68 @@ alias matrix="cmatrix -a -b -u 4 -C green -f"
 alias myip="curl ifconfig.co"
 alias password_ssh="ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no"
 
-bak () {
-    cp -v $1 $1.orig
+bak() {
+  cp -v $1 $1.orig
 }
 
-show_path () {
-    echo "PATH var:"
-    echo $PATH | tr ":" "\n" | nl
+show_path() {
+  echo "PATH var:"
+  echo $PATH | tr ":" "\n" | nl
 }
 
-function brew_find_pkg {
-    file_to_search="$@"
+brew_find_pkg() {
+  file_to_search="$@"
 
-    for package in $(brew list); do
-        brew ls $package | grep -E -q "/${file_to_search}$"
-        if [ $? -eq 0 ]; then
-            echo $package
-            break
-        fi
-    done
+  for package in $(brew list); do
+    brew ls $package | grep -E -q "/${file_to_search}$"
+    if [ $? -eq 0 ]; then
+      echo $package
+      break
+    fi
+  done
 }
 
 terraform_targets() {
-    # terraform plan | terraform-targets | grep 'some pattern' | xargs -r terraform apply -auto-approve
-    sed 's/\x1b\[[0-9;]*m//g' | grep -o '# [^( ]* ' | grep '\.' | sed " s/^# /-target '/; s/ $/'/; "
+  # terraform plan | terraform-targets | grep 'some pattern' | xargs -r terraform apply -auto-approve
+  sed 's/\x1b\[[0-9;]*m//g' | grep -o '# [^( ]* ' | grep '\.' | sed " s/^# /-target '/; s/ $/'/; "
 }
 
 terraform_targets_apply() {
-    terraform plan | terraform-targets | grep ${1} | xargs -r terraform apply -auto-approve
+  terraform plan | terraform-targets | grep ${1} | xargs -r terraform apply -auto-approve
 }
 
+# ssh.yk5c.<serial>.ed25519.sk.<name>.[prv/pub]
 ssh_ed25519_sk() {
-    ssh-keygen -t ed25519-sk -O resident -O application=ssh:$1 -O verify-required -C "" -N "" -f "./${2}"
+  if [[ ! ykman ]]; then
+    echo "Please install ykman"
+    return 1
+  fi
+
+  if [[ $(ykman -d "${1}" info) ]]; then
+    ssh-keygen -t ed25519-sk -O application=ssh:${2} -O resident -O verify-required -C "" -N "" -f "./ssh.yk5c.${1}.ed25519.sk.${2}" -a $(seq 3 64 | sort -R | head -n 1) -q
+    mv ssh.yk5c.${1}.ed25519.sk.${2} ssh.yk5c.${1}.ed25519.sk.${2}.prv
+  else
+    echo "No Yubikey found"
+    return 1
+  fi
 }
 
-ssh_ed25519_backup() {
-    ssh-keygen -t ed25519 -O resident -O application=ssh:backup -O verify-required -C "" -N "${1}" -f "./${2}"
+ssh_ed25519_sk_yk5c_25567588() {
+  ssh_ed25519_sk 25567588 $@
+}
+
+# ssh.ed25519.<name>.[prv/pub]
+ssh_ed25519() {
+  ssh-keygen -t ed25519 -O application=ssh:${1} -C "" -N "" -f "./ssh.ed25519.${1}" -a $(seq 3 64 | sort -R | head -n 1) -q
+  mv ssh.ed25519.${1} ssh.ed25519.${1}.prv
+}
+
+# ssh.ed25519.<name>.[prv/pub]
+ssh_ed25519_password() {
+  echo -n "Enter password for ${1}: \n"
+  read -s password
+  ssh-keygen -t ed25519 -O application=ssh:${1} -C "" -N "${password}" -f "./ssh.ed25519.${1}" -a $(seq 3 64 | sort -R | head -n 1) -q
+  mv ssh.ed25519.${1} ssh.ed25519.${1}.prv
 }
 
 # tmux detach or delete; https://superuser.com/questions/1466769/how-to-make-ctrld-detach-tmux-while-retaining-gnu-readline-capabilities-in-bas/1466808#1466808
@@ -148,5 +174,5 @@ alias macos_add_full_dockspace="defaults write com.apple.dock persistent-apps -a
 alias macos_add_half_dock_space="defaults write com.apple.dock persistent-apps -array-add '{\"tile-type\"=\"small-spacer-tile\";}' && killall Dock"
 
 macos_setup() {
-    defaults write com.apple.Dock showhidden -bool TRUE && killall Dock
+  defaults write com.apple.Dock showhidden -bool TRUE && killall Dock
 }

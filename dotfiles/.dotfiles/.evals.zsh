@@ -1,5 +1,6 @@
 ### EVALS
-if [[ "$(whoami)" != "root" && $(hostname -s) == "axaal" ]]; then
+# && $(hostname -s) == "axaal"
+if [[ "$(whoami)" != "root" ]]; then
   source <(/opt/homebrew/bin/brew shellenv)
   source <(oh-my-posh init zsh --config ~/.dotfiles/.omp.yaml)
   source <(mise activate zsh --shims)

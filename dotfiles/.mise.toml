@@ -1,22 +1,33 @@
 # https://mise.jdx.dev/configuration.html
 
 [tools]
-awscli = '2.15.61'
-git = '2.45.2'
-helm = '3.15.0'
-k9s = '0.32.4'
-kubectl = '1.30.1'
-kubectx = '0.9.5'
-pre-commit = '3.7.1'
-python = '3.12.3'
-terraform = '1.8.4'
-terraform-docs = '0.18.0'
-trivy = '0.51.4'
-trufflehog = '3.77.0'
+awscli         = 'latest'
+helm           = 'latest'
+k9s            = 'latest'
+kubectl        = 'latest'
+kubectx        = 'latest'
+pre-commit     = 'latest'
+python         = '3.12'
+terraform      = '1.8'
+terraform-docs = 'latest'
+trivy          = 'latest'
+trufflehog     = 'latest'
 
 [plugins]
 trufflehog = 'https://github.com/Inetum-Poland/asdf-trufflehog.git'
 
 [settings]
+activate_aggressive = true
+trusted_config_paths = [
+  '~/Projects',
+]
+
 legacy_version_file               = true # enabled by default (unlike asdf)
 legacy_version_file_disable_tools = ['python', 'terraform']
+not_found_auto_install            = true
+
+status = { missing_tools = "if_other_versions_installed", show_env = true, show_tools = false }
+experimental = true
+
+[env]
+MISE_USE_VERSIONS_HOST=false

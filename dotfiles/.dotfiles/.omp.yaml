@@ -43,6 +43,8 @@ blocks:
           branch_icon: ''
           github_icon: "\uF408"
           branch_max_length: 25
+          truncate_symbol: ..
+          full_branch_path: true
           fetch_status: true
           fetch_upstream_icon: true
 
