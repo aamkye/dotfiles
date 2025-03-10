@@ -1,0 +1,105 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
+secondary_prompt:
+  template: ">> "
+  foreground: yellow
+  background: transparent
+transient_prompt:
+  template: "> "
+  foreground: green
+  background: transparent
+  foreground_templates:
+  - "{{ if gt .Code 0 }}red{{ end }}"
+  - "{{ if eq .Code 0 }}green{{ end }}"
+console_title_template: "{{ .Folder }}"
+blocks:
+- type: prompt
+  alignment: left
+  segments:
+  - style: plain
+    template: <white,transparent>as</> {{ .UserName }}{{ if .SSHSession }}@{{ .HostName }}{{ end }}
+    foreground: lightBlue
+    background: transparent
+    type: session
+  - properties:
+      max_depth: 2
+      style: agnoster_short
+    style: plain
+    template: " <white,transparent>in</> {{ path .Path .Location }}"
+    foreground: yellow
+    background: transparent
+    type: path
+  - properties:
+      branch_icon: ""
+      branch_max_length: 25
+      fetch_status: true
+      fetch_upstream_icon: true
+      full_branch_path: true
+      github_icon: 
+      truncate_symbol: ..
+    style: plain
+    template: " <white,transparent>on</> {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }}{{ end }} {{ .HEAD }} {{- if not (and (eq .Behind 0) (eq .Ahead 0)) }} {{ .BranchStatus }}{{ end -}} {{- if gt .StashCount 0 }} <lightRed,transparent>*{{ .StashCount }}</>{{ end -}} {{- if or (.Working.Changed) (.Staging.Changed) }} <white,transparent>(</> {{- if .Working.Changed }}<lightRed,transparent>{{ .Working.String }}</>{{ end -}} {{- if and (.Working.Changed) (.Staging.Changed) }}<white,transparent>|</>{{ end -}} {{- if .Staging.Changed }}<lightGreen,transparent>{{ .Staging.String }}</>{{ end -}} <white,transparent>)</> {{- end -}}"
+    foreground: green
+    background: transparent
+    type: git
+  newline: true
+- type: prompt
+  alignment: right
+  overflow: hide
+  segments:
+  - style: plain
+    template: " <white,transparent>at</> {{ .CurrentDate | date \"15:04\" -}}"
+    foreground: magenta
+    background: transparent
+    type: time
+  - properties:
+      always_enabled: false
+      style: austin
+      threshold: 1000
+    style: plain
+    template: " <white,transparent>took</> {{ .FormattedMs -}}"
+    foreground: yellow
+    background: transparent
+    type: executiontime
+- type: prompt
+  alignment: left
+  segments:
+  - style: plain
+    template: "> "
+    foreground: green
+    background: transparent
+    type: text
+    foreground_templates:
+    - "{{ if gt .Code 0 }}red{{ end }}"
+    - "{{ if eq .Code 0 }}green{{ end }}"
+  newline: true
+- type: rprompt
+  alignment: right
+  segments:
+  - properties:
+      charged_icon: ""
+      charging_icon: +
+      discharging_icon: '-'
+      display_error: true
+      not_charging_icon: "~"
+    style: plain
+    template: "{{ if not .Error }} <white,transparent>with</> {{ .Icon }}{{ .Percentage }}%{{ end -}}{{ .Error }}"
+    background: transparent
+    type: battery
+    foreground_templates:
+    - "{{if ge 0 .Percentage}}red{{end}}"
+    - "{{if ge 20 .Percentage}}lightRed{{end}}"
+    - "{{if ge 40 .Percentage}}yellow{{end}}"
+    - "{{if ge 60 .Percentage}}lightYellow{{end}}"
+    - "{{if ge 80 .Percentage}}lightGreen{{end}}"
+    - "{{if ge 90 .Percentage}}green{{end}}"
+  - cache:
+      duration: 2h0m0s
+      strategy: folder
+    style: plain
+    template: "{{- if not (eq .Current .Latest) }} ^<green,transparent>OMP</>{{ end }}"
+    foreground: white
+    background: transparent
+    type: upgrade
+version: 3
+auto_upgrade: true

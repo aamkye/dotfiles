@@ -9,7 +9,7 @@
 [user]
   email = amadeusz.kryze@pm.me
 	name = Aam
-	signingkey = 57338508EFAA3D34546C4E327BC58710260A0675
+	signingkey = /Users/aam/.ssh/ssh.ed25519.sign.github.com.pub
 [http]
 	sslverify = false
 [pull]
@@ -30,7 +30,16 @@
 	required = true
 [gpg]
 	program = gpg
+	format = ssh
 [push]
 	autoSetupRemote = true
 [rebase]
 	autoStash = true
+[commit]
+	gpgsign = true
+[gpg "ssh"]
+	allowedSignersFile = /Users/aam/.ssh/allowed_signers
+[tag]
+	gpgsign = true
+[format]
+	signoff = true

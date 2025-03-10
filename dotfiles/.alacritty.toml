@@ -1,0 +1,25 @@
+# https://alacritty.org/config-alacritty.html
+
+[general]
+live_config_reload = true
+
+[window]
+dynamic_padding = true
+decorations = "Buttonless"
+opacity = 0.9
+blur = true
+option_as_alt = "Both"
+
+[font]
+# Fira Code
+normal = { family = "FiraCode Nerd Font Mono", style = "Retina" }
+size = 14
+
+[cursor]
+style = { shape = "Underline", blinking = "On" }
+
+[terminal]
+osc52 = "CopyPaste"
+
+[mouse]
+hide_when_typing = true

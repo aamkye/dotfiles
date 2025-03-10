@@ -2,19 +2,15 @@
 
 [tools]
 awscli         = 'latest'
+dotnet         = "8.0.406"
 helm           = 'latest'
 k9s            = 'latest'
 kubectl        = 'latest'
 kubectx        = 'latest'
 pre-commit     = 'latest'
-python         = '3.12'
-terraform      = '1.8'
+python         = "3.12.9"
+terraform      = "1.10"
 terraform-docs = 'latest'
-trivy          = 'latest'
-trufflehog     = 'latest'
-
-[plugins]
-trufflehog = 'https://github.com/Inetum-Poland/asdf-trufflehog.git'
 
 [settings]
 activate_aggressive = true
@@ -26,8 +22,10 @@ legacy_version_file               = true # enabled by default (unlike asdf)
 legacy_version_file_disable_tools = ['python', 'terraform']
 not_found_auto_install            = true
 
-status = { missing_tools = "if_other_versions_installed", show_env = true, show_tools = false }
 experimental = true
 
 [env]
 MISE_USE_VERSIONS_HOST=false
+
+# [settings.python]
+# compile = false

@@ -6,30 +6,35 @@
 # ╚═╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝
 # https://textkool.com/en/ascii-art-generator?hl=default&vl=default&font=ANSI%20Shadow&text=.priv.zsh
 
-# --- MacOS -------------------------------------------------------------------
+### DOT EXPANDER
+qc-rationalize-dot() {
+  if [[ $LBUFFER == *.. ]] {
+    LBUFFER+='/..'
+  } else {
+    LBUFFER+='.'
+  }
+}
+zle -N qc-rationalize-dot
+### END DOT EXPANDER
 
-alias make="gmake"
-alias grep="ggrep"
+### MACOS
+alias clear_brew_cache="sudo rm -rf `brew --cache`"
+alias flush_dns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
+alias icloud="cd '$HOME/Library/Mobile Documents/' || true"
+alias macos_add_full_dockspace="defaults write com.apple.dock persistent-apps -array-add '{\"tile-type\"=\"spacer-tile\";}' && killall Dock"
+alias macos_add_half_dock_space="defaults write com.apple.dock persistent-apps -array-add '{\"tile-type\"=\"small-spacer-tile\";}' && killall Dock"
 
-# --- General -----------------------------------------------------------------
+macos_create_blank_space_on_dock() {
+  defaults write com.apple.Dock showhidden -bool TRUE && killall Dock
+}
+### END MACOS
 
-alias back="cd $OLDPWD"
-alias c="clear"
-alias check_tunnels="sudo lsof -i -n | grep \"IPv4\" | egrep '\<ssh\>'"
+### PLUS
+alias mkdir+="mkdir -p -v"
 alias cp+="cp -rfiv"
 alias df+="df -h"
 alias du+="du -c -h"
-alias ducks='du -cks -- * | sort -rn | head'
-alias get_public_key="ssh-keygen -y -f"
-# alias less="less -CfJMNRSUW"
-alias ll="eza --long --header --group --colour-scale --group-directories-first --octal-permissions --time-style=long-iso -a"
-# alias ll="eza -alhgF --group-directories-first --octal-permissions --sort name --git"
-alias etree="et --ignore-git --dirs-first --sort name -HI"
-alias mkdir+="mkdir -p -v"
-# alias mv="noglob zmv -W"
-alias reload="exec -l ${SHELL}"
 alias rm+="rm -rfiv"
-alias root="sudo -s"
 alias rsync+='rsync \
   --partial \
   --progress \
@@ -40,12 +45,42 @@ alias rsync+='rsync \
   --no-compress \
   --verbose \
   --append-verify'
+### END PLUS
+
+### GENERAL
+alias omp="oh-my-posh"
+alias ll="eza \
+  --long \
+  --header \
+  --group \
+  --group-directories-first \
+  --octal-permissions \
+   --git \
+  -a"
+alias get_public_key="ssh-keygen -y -f"
+alias check_tunnels="sudo lsof -i -n | grep \"IPv4\" | egrep '\<ssh\>'"
+alias ducks='du -cks -- * | sort -rn | head'
+alias root="sudo -s"
 alias swapcls='sudo swapoff -a && sudo swapon -a'
 alias test_color="msgcat --color=test"
-alias omp="oh-my-posh"
+alias fman="compgen -c | fzf | xargs man"
+### END GENERAL
 
-# --- Git ---------------------------------------------------------------------
-alias gca+="git commit --amend --reuse-message=HEAD@{1}"
+### GIT
+# https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/git/git.plugin.zsh
+# ! TODO: add FZF plugins
+
+function git_current_branch() {
+  local ref
+  ref=$(git symbolic-ref --quiet HEAD 2> /dev/null)
+  local ret=$?
+  if [[ $ret != 0 ]]; then
+    [[ $ret == 128 ]] && return  # no git repo.
+    ref=$(git rev-parse --short HEAD 2> /dev/null) || return
+  fi
+  echo ${ref#refs/heads/}
+}
+
 alias gdf="git diff -U0 --word-diff"
 alias glgf="glgs --follow -U0 --word-diff -p"
 alias glgs="git log --pretty=\"format:%C(yellow)%h %Creset| %Cblue%ar - %aD %Creset| %Cgreen%aE %Creset|%Cred%d %Creset%s%n\" --abbrev=12 --graph --full-history --stat"
@@ -53,13 +88,20 @@ alias glgs1="git log --pretty=\"format:%C(yellow)%h %Creset| %Cblue%ar %Creset| 
 alias glgs2="git log --pretty=\"format:%C(yellow)%h %Creset| %Cblue%ar %Creset| %Cgreen%aE %Creset|%Cred%d %Creset%s%n\" --abbrev=12 -U0 -p --word-diff"
 alias gss="git submodule status"
 
+alias gaa='git add --all'
+alias gsb='git status --short --branch'
+alias ggpush='git push origin "$(git_current_branch)"'
+alias ggpull='git pull origin "$(git_current_branch)"'
+alias gfa='git fetch --all --tags --prune --jobs=10'
+
 git_squash () {
   git reset $(git merge-base $1 $(git rev-parse --abbrev-ref HEAD))
   git add -A
   git commit -m "${2}"
 }
+### END GIT
 
-# --- Tooling -----------------------------------------------------------------
+### TOOLING
 alias ac="export ANSIBLE_CONFIG=./ansible.cfg"
 alias ap="ansible-playbook"
 alias av="ansible-vault"
@@ -72,7 +114,9 @@ alias scode="sudo code --user-data-dir=/root"
 alias setenv="source ~/venv/bin/activate"
 alias pc="pre-commit"
 alias clear_ssh="ssh-add -D"
+### END Tooling
 
+### MISC
 # --- Misc --------------------------------------------------------------------
 alias fuck='sudo $(fc -ln -1)'
 alias gcmsg_timed='git commit -m "Update: $(date --rfc-email)"'
@@ -109,70 +153,29 @@ terraform_targets() {
 terraform_targets_apply() {
   terraform plan | terraform-targets | grep ${1} | xargs -r terraform apply -auto-approve
 }
+### END MISC
 
-# ssh.yk5c.<serial>.ed25519.sk.<name>.[prv/pub]
-ssh_ed25519_sk() {
-  if [[ ! ykman ]]; then
-    echo "Please install ykman"
-    return 1
-  fi
+### ZELLIJ
+zell() {
+  ZJ_SESSIONS=$(zellij list-sessions --no-formatting)
+  NO_SESSIONS=$(echo "${ZJ_SESSIONS}" | wc -l)
 
-  if [[ $(ykman -d "${1}" info) ]]; then
-    ssh-keygen -t ed25519-sk -O application=ssh:${2} -O resident -O verify-required -C "" -N "" -f "./ssh.yk5c.${1}.ed25519.sk.${2}" -a $(seq 3 64 | sort -R | head -n 1) -q
-    mv ssh.yk5c.${1}.ed25519.sk.${2} ssh.yk5c.${1}.ed25519.sk.${2}.prv
-  else
-    echo "No Yubikey found"
-    return 1
-  fi
-}
+  if [[ -z "$ZELLIJ" ]]; then
+    if [[ "$ZELLIJ_AUTO_ATTACH" == "true" ]]; then
+      if [ "${NO_SESSIONS}" -ge 1 ]; then
+        zellij attach \
+        "$(echo "${ZJ_SESSIONS}" | fzf | cut -d ' ' -f 1)"
+      else
+        zellij attach -c
+      fi
+      # zellij attach -c
+    else
+      zellij
+    fi
 
-ssh_ed25519_sk_yk5c_25567588() {
-  ssh_ed25519_sk 25567588 $@
-}
-
-# ssh.ed25519.<name>.[prv/pub]
-ssh_ed25519() {
-  ssh-keygen -t ed25519 -O application=ssh:${1} -C "" -N "" -f "./ssh.ed25519.${1}" -a $(seq 3 64 | sort -R | head -n 1) -q
-  mv ssh.ed25519.${1} ssh.ed25519.${1}.prv
-}
-
-# ssh.ed25519.<name>.[prv/pub]
-ssh_ed25519_password() {
-  echo -n "Enter password for ${1}: \n"
-  read -s password
-  ssh-keygen -t ed25519 -O application=ssh:${1} -C "" -N "${password}" -f "./ssh.ed25519.${1}" -a $(seq 3 64 | sort -R | head -n 1) -q
-  mv ssh.ed25519.${1} ssh.ed25519.${1}.prv
-}
-
-# tmux detach or delete; https://superuser.com/questions/1466769/how-to-make-ctrld-detach-tmux-while-retaining-gnu-readline-capabilities-in-bas/1466808#1466808
-# function _delete_or_maybe_detach() {
-#   [ -n "$BUFFER" ] && zle delete-char-or-list
-#   [ "$(tmux list-windows | wc -l)" -gt 1 ] && exit
-#   [ "$(tmux list-panes | wc -l)" -gt 1 ] && exit
-#   tmux detach-client
-# }
-
-# if [[ -n "$TMUX" ]]; then
-#   setopt ignoreeof
-#   zle -N _delete_or_maybe_detach
-#   bindkey "^D" _delete_or_maybe_detach
-# fi
-
-function tmuxx() {
-  if tmux has-session -t "${1:-main}" 2>/dev/null; then
-    tmux attach-session -t "${1:-main}"
-  else
-    tmux new-session -s "${1:-main}"
+    if [[ "$ZELLIJ_AUTO_EXIT" == "true" ]]; then
+      exit
+    fi
   fi
 }
-
-# --- MacOS -------------------------------------------------------------------
-alias clear_brew_cache="sudo rm -rf `brew --cache`"
-alias flush_dns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
-alias icloud="cd '$HOME/Library/Mobile Documents/' || true"
-alias macos_add_full_dockspace="defaults write com.apple.dock persistent-apps -array-add '{\"tile-type\"=\"spacer-tile\";}' && killall Dock"
-alias macos_add_half_dock_space="defaults write com.apple.dock persistent-apps -array-add '{\"tile-type\"=\"small-spacer-tile\";}' && killall Dock"
-
-macos_setup() {
-  defaults write com.apple.Dock showhidden -bool TRUE && killall Dock
-}
+### END ZELLIJ
